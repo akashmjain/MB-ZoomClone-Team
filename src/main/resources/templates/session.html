@@ -152,6 +152,14 @@
 				});
 
 				// --- 7) Specify the actions when events take place in our publisher ---
+					$(document).ready(function() {
+   						$('#audio').click(function() {
+      						publisher.publishAudio($(this).hasClass("fa-microphone-slash"));
+      						$(this).toggleClass("fa-microphone-slash");
+      						$(this).toggleClass("fa-microphone");
+   						});
+					});
+
 
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
