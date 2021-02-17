@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+	<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 	<!-- Bootstrap -->
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
@@ -46,8 +47,6 @@
 						<button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit" onclick="leaveSession()">
 							Leave session</button>
 					</form>
-					<button class="btn btn-large" id="buttonVideoOn">Video On</button>
-					<button class="btn btn-large" id="buttonVideoOff">Video Off</button>
 				</div>
 				<div id="main-video" class="col-md-6">
 					<p class="nickName"></p>
@@ -144,15 +143,6 @@
 				});
 
 				// --- 7) Specify the actions when events take place in our publisher ---
-
-
-				buttonVideoOn.onclick = () => {
-					publisher.publishVideo(true);
-				}
-
-				buttonVideoOff.onclick = () => {
-					publisher.publishVideo(false);
-				}
 
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
