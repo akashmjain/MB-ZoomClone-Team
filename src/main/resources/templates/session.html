@@ -160,6 +160,13 @@
    						});
 					});
 
+					$(document).ready(function() {
+   						$('#video').click(function() {
+      						publisher.publishVideo($(this).hasClass("fa-video-slash"));
+      						$(this).toggleClass("fa-video-slash");
+      						$(this).toggleClass("fa-video");
+   						});
+					});
 
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
