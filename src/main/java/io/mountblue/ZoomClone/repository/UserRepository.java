@@ -1,6 +1,6 @@
 package io.mountblue.ZoomClone.repository;
 
-import io.openvidu.mvc.java.model.User;
+import io.mountblue.ZoomClone.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
