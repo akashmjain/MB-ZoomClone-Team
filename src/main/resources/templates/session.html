@@ -156,7 +156,19 @@
 
 				// --- 7) Specify the actions when events take place in our publisher ---
 
-					// added mute/un-mute feature
+				// When our HTML video has been added to DOM...
+				publisher.on('videoElementCreated', (event) => {
+					// Init the main video with ours and append our data
+					var userData = {
+						nickName: nickName,
+						userName: userName
+					};
+					initMainVideo(event.element, userData);
+					appendUserData(event.element, userData);
+					$(event.element).prop('muted', true); // Mute local video
+				});
+
+				// added mute/un-mute feature
 					$(document).ready(function() {
    						$('#audio').click(function() {
       						publisher.publishAudio($(this).hasClass("fa-microphone-slash"));
@@ -177,38 +189,44 @@
 					// added screen sharing feature
 					$(document).ready(function() {
    						$('#share').click(function() {
-   						session.unpublish(publisher);
-							publisher = OV.initPublisher("html-element-id", { videoSource: "screen" });
+   							session.unpublish(publisher);
+							publisher = OV.initPublisher("html-element-id", { videoSource: "screen"});
 							publisher.once('accessAllowed', (event) => {
             					publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
                 					console.log('User pressed the "Stop sharing" button');
                 					session.unpublish(publisher);
                 					publisher = OV.initPublisher('video-container',publisherConfig);
+									publisher.on('videoElementCreated', (event) => {
+										var userData = {
+											nickName: nickName,
+											userName: userName
+										};
+										initMainVideo(event.element, userData);
+										appendUserData(event.element, userData);
+										$(event.element).prop('muted', true); // Mute local video
+									});
                 					session.publish(publisher);
             					});
             					session.publish(publisher);
 							});
 							publisher.once('accessDenied', (event) => {
+								publisher = OV.initPublisher('video-container',publisherConfig);
+									publisher.on('videoElementCreated', (event) => {
+										var userData = {
+											nickName: nickName,
+											userName: userName
+										};
+										initMainVideo(event.element, userData);
+										appendUserData(event.element, userData);
+										$(event.element).prop('muted', true); // Mute local video
+									});
+                					session.publish(publisher);
             					console.warn('ScreenShare: Access Denied');
         					});
    							$(this).toggleClass("fa-video-slash");
    							$(this).toggleClass("fa-laptop");
    						});
 					});
-
-
-
-				// When our HTML video has been added to DOM...
-				publisher.on('videoElementCreated', (event) => {
-					// Init the main video with ours and append our data
-					var userData = {
-						nickName: nickName,
-						userName: userName
-					};
-					initMainVideo(event.element, userData);
-					appendUserData(event.element, userData);
-					$(event.element).prop('muted', true); // Mute local video
-				});
 
 
 				// --- 8) Publish your stream ---
