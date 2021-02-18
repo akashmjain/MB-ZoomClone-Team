@@ -1,4 +1,4 @@
-package io.openvidu.mvc.java.model;
+package io.mountblue.ZoomClone.model;
 
 import javax.persistence.*;
 
