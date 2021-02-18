@@ -40,14 +40,14 @@ public class LoginController {
     @RequestMapping(value = "/")
     public String logout(HttpSession httpSession) {
         if (checkUserLogged(httpSession)) {
-            return "redirect:/dashboard";
+            return "redirect:/main";
         } else {
             httpSession.invalidate();
             return "index";
         }
     }
 
-    @RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value = "/main", method = { RequestMethod.GET, RequestMethod.POST })
     public String login(@RequestParam(name = "user", required = false) String user,
                         @RequestParam(name = "pass", required = false) String pass, Model model, HttpSession httpSession) {
 
@@ -56,7 +56,7 @@ public class LoginController {
         if (userName != null) {
             // User is already logged. Immediately return dashboard
             model.addAttribute("username", userName);
-            return "dashboard";
+            return "main";
         }
 
         // User wasn't logged and wants to
@@ -67,8 +67,8 @@ public class LoginController {
             httpSession.setAttribute("loggedUser", user);
             model.addAttribute("username", user);
 
-            // Return dashboard.html template
-            return "dashboard";
+            // Return main.html template
+            return "main";
 
         } else { // Wrong user-pass
             // Invalidate session and redirect to index.html

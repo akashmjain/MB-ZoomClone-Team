@@ -80,9 +80,9 @@ public class SessionController {
                 return "session";
 
             } catch (Exception e) {
-                // If error just return dashboard.html template
+                // If error just return main.html template
                 model.addAttribute("username", httpSession.getAttribute("loggedUser"));
-                return "dashboard";
+                return "main";
             }
         } else {
             // New session
@@ -109,9 +109,9 @@ public class SessionController {
                 return "session";
 
             } catch (Exception e) {
-                // If error just return dashboard.html template
+                // If error just return main.html template
                 model.addAttribute("username", httpSession.getAttribute("loggedUser"));
-                return "dashboard";
+                return "main";
             }
         }
     }
@@ -137,18 +137,18 @@ public class SessionController {
                     // Last user left: session must be removed
                     this.mapSessions.remove(sessionName);
                 }
-                return "redirect:/dashboard";
+                return "redirect:/main";
 
             } else {
                 // The TOKEN wasn't valid
                 System.out.println("Problems in the app server: the TOKEN wasn't valid");
-                return "redirect:/dashboard";
+                return "redirect:/main";
             }
 
         } else {
             // The SESSION does not exist
             System.out.println("Problems in the app server: the SESSION does not exist");
-            return "redirect:/dashboard";
+            return "redirect:/main";
         }
     }
 
