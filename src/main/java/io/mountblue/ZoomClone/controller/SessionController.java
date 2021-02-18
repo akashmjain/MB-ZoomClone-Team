@@ -81,6 +81,7 @@ public class SessionController {
 
             } catch (Exception e) {
                 // If error just return main.html template
+                System.out.println(e);
                 model.addAttribute("username", httpSession.getAttribute("loggedUser"));
                 return "main";
             }

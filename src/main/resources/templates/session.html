@@ -57,6 +57,8 @@
 				<div id="video-container" class="col-md-6"></div>
 			</div>
 		</div>
+		<button class="btn btn-large btn-danger" id="buttonStartRecording">Start Recording</button>
+		<button class="btn btn-large btn-danger" id="buttonStopRecording">Stop Recording</button>
 	</div>
 
 	<footer class="footer">
@@ -154,6 +156,15 @@
 					publisher.publishVideo(false);
 				}
 
+				buttonStartRecording.onclick = () => {
+					console.log("Start the recording with video_name.mp4");
+					startRecording(session);
+				}
+
+				buttonStopRecording.onclick = () => {
+					console.log("Stop the recording with video_name.mp4");
+					stopRecording();
+				}
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
 					// Init the main video with ours and append our data
@@ -170,7 +181,6 @@
 				// --- 8) Publish your stream ---
 				session.publish(publisher);
 
-
 			} else {
 				console.warn('You don\'t have permissions to publish');
 				initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
@@ -186,6 +196,45 @@
 		// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
 	}
+
+	function startRecording(session) {
+		var outputMode = "COMPOSED_QUICK_START";
+		var hasAudio = true;
+		var hasVideo = true;
+		httpRequest(
+			'POST',
+			'api/recording/start', {
+				session: session.sessionId,
+				outputMode: outputMode,
+				hasAudio: hasAudio,
+				hasVideo: hasVideo
+			},
+			'Start recording WRONG',
+			res => {
+				console.log(res);
+				document.getElementById('buttonStartRecording').disabled = true;
+				document.getElementById('buttonStopRecording').disabled = false;
+			}
+		);
+	}
+
+	function stopRecording() {
+		var forceRecordingId = ;
+		httpRequest(
+			'POST',
+			'api/recording/stop', {
+				recording: forceRecordingId
+			},
+			'Stop recording WRONG',
+			res => {
+				console.log(res);
+				document.getElementById('buttonStopRecording').disabled = true;
+				document.getElementById('buttonStartRecording').disabled = false;
+			}
+		);
+	}
+
+
 
 	function appendUserData(videoElement, connection) {
 		var clientData;
@@ -254,6 +303,31 @@
 
 	function isPublisher() {
 		return userName.includes('publisher');
+	}
+
+	function httpRequest(method, url, body, errorMsg, callback) {
+		$('#textarea-http').text('');
+		var http = new XMLHttpRequest();
+		http.open(method, url, true);
+		http.setRequestHeader('Content-type', 'application/json');
+		http.addEventListener('readystatechange', processRequest, false);
+		http.send(JSON.stringify(body));
+
+		function processRequest() {
+			if (http.readyState == 4) {
+				if (http.status == 200) {
+					try {
+						callback(JSON.parse(http.responseText));
+					} catch (e) {
+						callback(e);
+					}
+				} else {
+					console.warn(errorMsg + ' (' + http.status + ')');
+					console.warn(http.responseText);
+					$('#textarea-http').text(errorMsg + ": HTTP " + http.status + " (" + http.responseText + ")");
+				}
+			}
+		}
 	}
 </script>
 
