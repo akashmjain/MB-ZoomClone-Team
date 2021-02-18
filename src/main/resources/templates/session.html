@@ -35,8 +35,8 @@
 		</div>
 	</nav>
 
-	<div id="main-container" class="container">
-		<div id="logged">
+	<div id="main-container" class="container session-main">
+		<div id="logged" class="video-part">
 			<div id="session">
 				<div id="session-header">
 					<h1 th:text="${sessionName}" id="session-title"></h1>
@@ -57,8 +57,16 @@
 				<div id="video-container" class="col-md-6"></div>
 			</div>
 		</div>
+		<div id="chat-box">
+			<div style="display: flex;">
+				<input style="flex-grow: 1;" type="text" name="Input" placeholder="Enter the mesasge" id="textMessageBox">
+				<button class="btn btn-danger" id="buttonMessageSend">Send Message</button>
+			</div>
+		</div>
 	</div>
+	
 
+	</div>
 	<footer class="footer">
 		<div class="container">
 			<div class="text-muted">OpenVidu © 2017</div>
@@ -67,7 +75,7 @@
 			</a>
 		</div>
 	</footer>
-
+	
 </body>
 
 <script th:inline="javascript">
@@ -77,6 +85,8 @@
 	var token = [[${ token }]];
 	var nickName = [[${ nickName }]];
 	var userName = [[${ userName }]];
+
+	
 
 	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
@@ -113,6 +123,11 @@
 
 	// --- 4) Connect to the session passing the retrieved token and some more data from
 	//        the client (in this case a JSON with the nickname chosen by the user) ---
+	session.on('signal', (event) => {
+		console.log(event.data); // Message
+		console.log(event.from); // Connection object of the sender
+		console.log(event.type); // The type of message
+	});
 
 	session.connect(token, { clientData: nickName })
 		.then(() => {
@@ -145,6 +160,7 @@
 
 				// --- 7) Specify the actions when events take place in our publisher ---
 
+				// Turn on and off video camera
 
 				buttonVideoOn.onclick = () => {
 					publisher.publishVideo(true);
@@ -153,6 +169,27 @@
 				buttonVideoOff.onclick = () => {
 					publisher.publishVideo(false);
 				}
+				
+				buttonMessageSend.onclick = () => {
+					var msg = document.getElementById('textMessageBox').value;
+					// Send message globally
+					session.signal({
+						data: msg,  // Any string (optional)
+						to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+						type: 'my-chat'             // The type of message (optional)
+					})
+					.then(() => {
+						console.log('Message successfully sent');
+					})
+					.catch(error => {
+						console.error(error);
+					});	
+				}
+				
+
+				
+
+
 
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
@@ -166,7 +203,7 @@
 					$(event.element).prop('muted', true); // Mute local video
 				});
 
-
+					
 				// --- 8) Publish your stream ---
 				session.publish(publisher);
 

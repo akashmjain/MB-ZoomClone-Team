@@ -41,6 +41,7 @@ nav i.fa:hover {
 
 #main-container {
 	padding-bottom: 80px;
+	
 }
 
 .vertical-center {
@@ -226,11 +227,11 @@ a:hover .demo-logo {
 #session-title {
 	display: inline-block;
 }
-
+/* 
 #buttonLeaveSession {
 	float: right;
 	margin-top: 20px;
-}
+} */
 
 #video-container video {
 	position: relative;
@@ -343,7 +344,28 @@ table i {
 #name-user {
 	font-weight: bold;
 }
-
+/* Custom CSS Below */
+.session-main {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	border: solid;
+}
+#chat-box {
+	background:green;
+    height: 70%;
+    width: 30%;
+	display: flex;
+	flex-direction: column-reverse;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.video-part {
+	height: 100%;
+	width: 70%;
+	
+}
 
 /* xs ans md screen resolutions*/
 
