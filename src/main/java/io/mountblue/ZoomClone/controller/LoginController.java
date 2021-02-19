@@ -49,7 +49,8 @@ public class LoginController {
 
     @RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.POST })
     public String login(@RequestParam(name = "user", required = false) String user,
-                        @RequestParam(name = "pass", required = false) String pass, Model model, HttpSession httpSession) {
+                        @RequestParam(name = "pass", required = false) String pass,
+                        @RequestParam(name = "sesson") Model model, HttpSession httpSession) {
 
         // Check if the user is already logged in
         String userName = (String) httpSession.getAttribute("loggedUser");
