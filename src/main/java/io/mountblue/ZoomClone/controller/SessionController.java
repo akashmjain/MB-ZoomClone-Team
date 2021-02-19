@@ -3,12 +3,15 @@ package io.mountblue.ZoomClone.controller;
 
 import io.openvidu.java.client.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +43,7 @@ public class SessionController {
     @RequestMapping(value = "/session", method = {RequestMethod.POST, RequestMethod.GET})
     public String joinSession(@RequestParam(name = "data") String clientData,
                               @RequestParam(name = "session-name") String sessionName,
-                              Model model, HttpSession httpSession) {
+                              Model model, HttpSession httpSession, HttpServletRequest request) {
 
         try {
             checkUserLogged(httpSession);
@@ -77,7 +80,7 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-
+                model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/dashboard?sessionName="+sessionName);
                 // Return session.html template
                 return "session";
 
@@ -106,7 +109,7 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-
+                model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/dashboard?sessionName="+sessionName);
                 // Return session.html template
                 return "session";
 

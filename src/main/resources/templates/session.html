@@ -46,6 +46,7 @@
 				<button class="fa fa-record-vinyl" id="recording" style="font-size:24px"  />
 				<button class="fa fa-expand" id="fullscreen" style="font-size:24px" />
 				<!--fa-compress-->
+				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
 			</div>
 			<div id="session">
 				<div id="session-header">
@@ -247,6 +248,10 @@
 
 		// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
+	}
+
+	function inviteLink() {
+		alert([[${ inviteLink }]]);
 	}
 	
 	function appendUserData(videoElement, connection) {
