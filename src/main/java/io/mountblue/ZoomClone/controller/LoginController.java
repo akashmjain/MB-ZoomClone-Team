@@ -18,6 +18,11 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/login";
+    }
+
     @RequestMapping(value = "/dashboard", method = {RequestMethod.GET, RequestMethod.POST})
     public String showDashBoard(HttpSession httpSession, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -31,19 +31,20 @@ public class SessionController {
     private String SECRET;
 
     public SessionController(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl) {
+        System.out.println("In side Session Constructor");
         this.SECRET = secret;
         this.OPENVIDU_URL = openviduUrl;
         this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
     }
 
-    @RequestMapping(value = "/session", method = RequestMethod.POST)
+    @RequestMapping(value = "/session", method = {RequestMethod.POST, RequestMethod.GET})
     public String joinSession(@RequestParam(name = "data") String clientData,
                               @RequestParam(name = "session-name") String sessionName, Model model, HttpSession httpSession) {
 
         try {
             checkUserLogged(httpSession);
         } catch (Exception e) {
-            return "index";
+            return "login";
         }
         System.out.println("Getting sessionId and token | {sessionName}={" + sessionName + "}");
 
@@ -110,6 +111,7 @@ public class SessionController {
 
             } catch (Exception e) {
                 // If error just return dashboard.html template
+                System.out.println(e);
                 model.addAttribute("username", httpSession.getAttribute("loggedUser"));
                 return "dashboard";
             }
@@ -123,7 +125,7 @@ public class SessionController {
         try {
             checkUserLogged(httpSession);
         } catch (Exception e) {
-            return "index";
+            return "login";
         }
         System.out.println("Removing user | sessioName=" + sessionName + ", token=" + token);
 
