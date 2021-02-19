@@ -62,7 +62,7 @@
 				<input style="flex-grow: 1;" type="text" name="Input" placeholder="Enter the mesasge" id="textMessageBox">
 				<button class="btn btn-danger" id="buttonMessageSend">Send Message</button>
 			</div>
-			<div class="messages">
+			<div class="messages" id="chatbox">
 				
 			</div>
 		</div>
@@ -209,14 +209,14 @@
 			console.log(event.data); // Message
 			console.log(event.from); // Connection object of the sender
 			console.log(event.type); // The type of message
-			// append it to the chat 
-			$(".messages").append("<p>"+ event.data +" </p>")
+			$("#chatbox").append("<p>"+ event.data +" </p>")
 		});
 	}
 
 	function sendMessage(session) {
-		var msg = document.getElementById('textMessageBox').value;
+		var msg = `{${userName}} : ${document.getElementById('textMessageBox').value}`;
 		document.getElementById('textMessageBox').value = ""; // empty the msg box after msg is sent.
+		
 		// Send message globally
 		session.signal({
 			data: msg,  // Any string (optional)
@@ -300,5 +300,4 @@
 		return userName.includes('publisher');
 	}
 </script>
-
 </html>
