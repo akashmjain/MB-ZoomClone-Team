@@ -1,20 +1,37 @@
 package io.mountblue.ZoomClone.controller;
 
-
-import io.openvidu.java.client.OpenViduRole;
+import io.mountblue.ZoomClone.model.UserPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 @Controller
 public class LoginController {
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/login";
+    }
+
+    @RequestMapping(value = "/dashboard", method = {RequestMethod.GET, RequestMethod.POST})
+    public String showDashBoard(HttpSession httpSession, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        httpSession.setAttribute("loggedUser", (UserPrincipal)authentication.getPrincipal());
+        model.addAttribute("username", authentication.getName());
+        return "dashboard";
+    }
+}
+/*
 
     public class MyUser {
 
@@ -90,5 +107,4 @@ public class LoginController {
 
     private boolean checkUserLogged(HttpSession httpSession) {
         return !(httpSession == null || httpSession.getAttribute("loggedUser") == null);
-    }
-}
+    }*/
