@@ -63,7 +63,7 @@
 				<button class="btn btn-danger" id="buttonMessageSend">Send Message</button>
 			</div>
 			<div class="messages">
-				<p>Helo</p>
+				
 			</div>
 		</div>
 	</div>
@@ -88,8 +88,6 @@
 	var token = [[${ token }]];
 	var nickName = [[${ nickName }]];
 	var userName = [[${ userName }]];
-
-	
 
 	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
@@ -212,7 +210,7 @@
 			console.log(event.from); // Connection object of the sender
 			console.log(event.type); // The type of message
 			// append it to the chat 
-			document.getElementById('')
+			$(".messages").append("<p>"+ event.data +" </p>")
 		});
 	}
 
