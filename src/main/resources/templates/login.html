@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="ISO-8859-1">
     <title>Registration and Login App</title>
@@ -23,8 +23,7 @@
                     class="icon-bar"></span> <span class="icon-bar"></span> <span
                     class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" th:href="@{/}">Registration and
-                Login Module</a>
+            <a class="navbar-brand" href="#" th:href="@{/}">Login</a>
         </div>
     </div>
 </nav>
@@ -40,8 +39,7 @@
 
                 <!-- error message -->
                 <div th:if="${param.error}">
-                    <div class="alert alert-danger">Invalid username or
-                        password.</div>
+                    <div class="alert alert-danger">Invalid username or password.</div>
                 </div>
 
                 <!-- logout message -->
@@ -52,13 +50,13 @@
                 <div class = "form-group">
                     <label for ="username"> Username </label> :
                     <input type="text" class = "form-control" id ="username" name = "username"
-                           placeholder="Enter Email ID" autofocus="autofocus">
+                           placeholder="Enter your email..." autofocus="autofocus">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>: <input type="password"
-                                                                   id="password" name="password" class="form-control"
-                                                                   placeholder="Enter Password" />
+                    <label for="password">Password</label>:
+                    <input type="password" id="password" name="password" class="form-control"
+                           placeholder="Enter your password..." />
                 </div>
 
                 <div class="form-group">
@@ -71,7 +69,7 @@
                 </div>
             </form>
             <div class="form-group">
-						<span>New user? <a href="/" th:href="@{/registration}">Register
+						<span>New user? <a href="/" th:href="@{/showRegistrationForm}">Register
 								here</a></span>
             </div>
         </div>

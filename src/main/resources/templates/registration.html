@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="ISO-8859-1">
     <title>Registration</title>
@@ -21,8 +21,7 @@
                     class="icon-bar"></span> <span class="icon-bar"></span> <span
                     class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" th:href="@{/}">Registration and
-                Login Module</a>
+            <a class="navbar-brand" href="#" th:href="@{/showRegistrationForm}">Registration</a>
         </div>
     </div>
 </nav>
@@ -36,13 +35,11 @@
 
             <!-- success message -->
             <div th:if="${param.success}">
-                <div class="alert alert-info">You've successfully registered
-                    to our awesome app!</div>
+                <div class="alert alert-info">You've successfully registered to our awesome app!</div>
             </div>
 
             <h1>Registration</h1>
-
-            <form th:action="@{/registration}" method="post" th:object="${user}">
+            <form th:action="@{/registerUser}" method="post" th:object="${user}">
                 <div class="form-group">
                     <label class="control-label" for="firstName"> First Name </label>
                     <input id="firstName" class="form-control" th:field="*{firstName}"
@@ -69,8 +66,7 @@
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Register</button>
-                    <span>Already registered? <a href="/" th:href="@{/login}">Login
-        here</a></span>
+                    <span>Already registered? <a href="/" th:href="@{/login}">Login here</a></span>
                 </div>
             </form>
         </div>

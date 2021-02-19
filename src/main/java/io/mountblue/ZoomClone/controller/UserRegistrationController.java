@@ -1,35 +1,31 @@
 package io.mountblue.ZoomClone.controller;
 
-import io.mountblue.ZoomClone.dto.UserRegistrationDto;
-import io.mountblue.ZoomClone.service.MyUserService;
+import io.mountblue.ZoomClone.model.Users;
+import io.mountblue.ZoomClone.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = "/registration")
 public class UserRegistrationController {
 
     @Autowired
-    private MyUserService userService;
+    private UserDetailsServiceImpl userDetailsService;
 
-    @ModelAttribute("user")
-    public UserRegistrationDto userRegistrationDto() {
-        return new UserRegistrationDto();
-    }
-
-    @GetMapping
-    public String showRegistrationForm() {
+    @RequestMapping(value = "/showRegistrationForm", method = RequestMethod.GET)
+    public String showRegistrationForm(Model theModel) {
+        theModel.addAttribute("user", new Users());
         return "registration";
     }
 
-    @PostMapping
-    public String registerUserAccount(@ModelAttribute("user") UserRegistrationDto registrationDto) {
-        userService.save(registrationDto);
-        return "redirect:/registration?success";
+    @RequestMapping(value = "/registerUser", method = RequestMethod.POST)
+    public String registerUserAccount(@ModelAttribute("user") Users theUser) {
+        userDetailsService.save(theUser);
+        return "redirect:/showRegistrationForm?success";
     }
 
 }

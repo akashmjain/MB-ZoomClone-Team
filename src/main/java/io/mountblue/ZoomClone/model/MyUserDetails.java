@@ -1,57 +1,37 @@
 package io.mountblue.ZoomClone.model;
 
+import io.openvidu.java.client.OpenVidu;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UserPrincipal implements UserDetails {
+public class MyUserDetails implements UserDetails {
 
-    private User user;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
+    private Users theUser;
 
-    public UserPrincipal(User user) {
-        System.out.println("Inside UserPrincipal Contru : ");
-        this.user = user;
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public MyUserDetails(Users theUser) {
+        this.theUser = theUser;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return "ROLE_USER";
-            }
-        });
+        authorities.add(new SimpleGrantedAuthority("PUBLISHER"));
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return this.password;
+        return theUser.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return theUser.getEmail();
     }
 
     @Override
