@@ -39,7 +39,8 @@ public class SessionController {
 
     @RequestMapping(value = "/session", method = {RequestMethod.POST, RequestMethod.GET})
     public String joinSession(@RequestParam(name = "data") String clientData,
-                              @RequestParam(name = "session-name") String sessionName, Model model, HttpSession httpSession) {
+                              @RequestParam(name = "session-name") String sessionName,
+                              Model model, HttpSession httpSession) {
 
         try {
             checkUserLogged(httpSession);
