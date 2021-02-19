@@ -31,6 +31,7 @@ public class LoginController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         httpSession.setAttribute("loggedUser",authentication.getName());
         model.addAttribute("username", authentication.getName());
+        model.addAttribute("sessonName", sessonName);
         return "dashboard";
     }
 }

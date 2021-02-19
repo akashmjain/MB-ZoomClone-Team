@@ -35,9 +35,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         theUser.setPassword(bCryptPasswordEncoder.encode(theUser.getPassword()));
         usersRepository.save(theUser);
     }
-    /*
-
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }*/
 }
