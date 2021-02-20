@@ -75,7 +75,6 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-                model.addAttribute("sessionId", this.mapSessions.get(sessionName).getSessionId()); // gives the session ID
                 // Return session.html template
                 return "session";
 
@@ -104,7 +103,6 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-                model.addAttribute("sessionId", session.getSessionId());
 
                 // Return session.html template
                 return "session";
