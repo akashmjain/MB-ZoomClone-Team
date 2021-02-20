@@ -5,9 +5,7 @@ import io.openvidu.java.client.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
@@ -59,6 +57,8 @@ public class SessionController {
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                 .role(role).data(serverData).build();
 
+
+
         if (this.mapSessions.get(sessionName) != null) {
             // Session already exists
             System.out.println("Existing session " + sessionName);
@@ -75,7 +75,7 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-
+                model.addAttribute("sessionId", this.mapSessions.get(sessionName).getSessionId()); // gives the session ID
                 // Return session.html template
                 return "session";
 
@@ -104,6 +104,7 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
+                model.addAttribute("sessionId", session.getSessionId());
 
                 // Return session.html template
                 return "session";

@@ -9,5 +9,4 @@ public class ZoomCloneApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ZoomCloneApplication.class, args);
 	}
-
 }

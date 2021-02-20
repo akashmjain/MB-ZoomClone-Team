@@ -48,6 +48,9 @@
 					</form>
 					<button class="btn btn-large" id="buttonVideoOn">Video On</button>
 					<button class="btn btn-large" id="buttonVideoOff">Video Off</button>
+					<button class="btn btn-large" id="buttonFetchConnection">Fetch Data</button>
+					
+					
 				</div>
 				<div id="main-video" class="col-md-6">
 					<p class="nickName"></p>
@@ -63,7 +66,7 @@
 				<button class="btn btn-danger" id="buttonMessageSend">Send Message</button>
 			</div>
 			<div class="messages" id="chatbox">
-				
+
 			</div>
 		</div>
 	</div>
@@ -88,6 +91,9 @@
 	var token = [[${ token }]];
 	var nickName = [[${ nickName }]];
 	var userName = [[${ userName }]];
+	var connections = [];
+
+	
 
 	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
@@ -103,7 +109,7 @@
 
 	// On every new Stream received...
 	session.on('streamCreated', (event) => {
-
+	
 		// Subscribe to the Stream to receive it
 		// HTML video will be appended to element with 'video-container' id
 		var subscriber = session.subscribe(event.stream, 'video-container');
@@ -126,13 +132,24 @@
 	//        the client (in this case a JSON with the nickname chosen by the user) ---
 	recvMessage(session);
 
+	session.on('connectionCreated', (event) => {
+		connections.push(event.connection);
+		
+		console.warn(connections);
+	})
+
+	session.on('connectionDestroyed', (event) => {
+		connections.splice(connections.indexOf(event.connection), 1);
+		console.warn(connections);
+	})
+
 	session.connect(token, { clientData: nickName })
 		.then(() => {
 
 			// --- 5) Set page layout for active call ---
-
+			
 			$('#session-title').text(sessionName);
-			$('#join').hide();
+			$('#join').show();
 			$('#session').show();
 
 
@@ -142,6 +159,7 @@
 			// method is not recognized as 'PUBLIHSER' role by OpenVidu Server
 			if (isPublisher()) {
 
+				
 				// --- 6) Get your own camera stream ---
 
 				var publisher = OV.initPublisher('video-container', {
@@ -168,7 +186,11 @@
 				}
 				
 				buttonMessageSend.onclick = () => {
-					sendMessage(session);
+					sendMessage(session);					
+				}
+
+				buttonFetchConnection.onclick = () => {
+					fetchConnectionsInCurrentSession();
 				}
 
 				// When our HTML video has been added to DOM...
@@ -180,8 +202,11 @@
 					};
 					initMainVideo(event.element, userData);
 					appendUserData(event.element, userData);
+				
 					$(event.element).prop('muted', true); // Mute local video
 				});
+
+
 
 					
 				// --- 8) Publish your stream ---
@@ -298,6 +323,43 @@
 
 	function isPublisher() {
 		return userName.includes('publisher');
+	}
+
+	function fetchConnectionsInCurrentSession() {
+		console.warn("SESSION ID := " + sessionId)
+		httpRequest(
+			'GET',
+			'api/get/connections?sessionId='+sessionId, {},
+			'All session info couldn\'t be fetched',
+			res => {
+				console.warn("All session info has been fetched");
+				console.warn(JSON.stringify(res, null, "\t"));
+			}
+		);
+	}
+	function httpRequest(method, url, body, errorMsg, callback) {
+		$('#textarea-http').text('');
+		var http = new XMLHttpRequest();
+		http.open(method, url, true);
+		http.setRequestHeader('Content-type', 'application/json');
+		http.addEventListener('readystatechange', processRequest, false);
+		http.send(JSON.stringify(body));
+
+		function processRequest() {
+			if (http.readyState == 4) {
+				if (http.status == 200) {
+					try {
+						callback(JSON.parse(http.responseText));
+					} catch (e) {
+						callback(e);
+					}
+				} else {
+					console.warn(errorMsg + ' (' + http.status + ')');
+					console.warn(http.responseText);
+					$('#textarea-http').text(errorMsg + ": HTTP " + http.status + " (" + http.responseText + ")");
+				}
+			}
+		}
 	}
 </script>
 </html>
