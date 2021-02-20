@@ -130,7 +130,6 @@
 
 	session.on('connectionCreated', (event) => {
 		connections.push(event.connection);
-		
 		console.warn(connections);
 	})
 
@@ -199,14 +198,8 @@
 				
 					$(event.element).prop('muted', true); // Mute local video
 				});
-
-
-
-					
 				// --- 8) Publish your stream ---
 				session.publish(publisher);
-
-
 			} else {
 				console.warn('You don\'t have permissions to publish');
 				initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
@@ -218,7 +211,6 @@
 
 
 	function leaveSession() {
-
 		// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
 	}
@@ -235,7 +227,6 @@
 	function sendMessage(session) {
 		var msg = `{${userName}} : ${document.getElementById('textMessageBox').value}`;
 		document.getElementById('textMessageBox').value = ""; // empty the msg box after msg is sent.
-		
 		// Send message globally
 		session.signal({
 			data: msg,  // Any string (optional)
