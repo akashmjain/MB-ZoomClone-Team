@@ -47,9 +47,7 @@
 							Leave session</button>
 					</form>
 					<button class="btn btn-large" id="buttonVideoOn">Video On</button>
-					<button class="btn btn-large" id="buttonVideoOff">Video Off</button>
-					<button class="btn btn-large" id="buttonFetchConnection">Fetch Data</button>
-					
+					<button class="btn btn-large" id="buttonVideoOff">Video Off</button>	
 					
 				</div>
 				<div id="main-video" class="col-md-6">
@@ -189,9 +187,7 @@
 					sendMessage(session);					
 				}
 
-				buttonFetchConnection.onclick = () => {
-					fetchConnectionsInCurrentSession();
-				}
+				
 
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
@@ -323,43 +319,6 @@
 
 	function isPublisher() {
 		return userName.includes('publisher');
-	}
-
-	function fetchConnectionsInCurrentSession() {
-		console.warn("SESSION ID := " + sessionId)
-		httpRequest(
-			'GET',
-			'api/get/connections?sessionId='+sessionId, {},
-			'All session info couldn\'t be fetched',
-			res => {
-				console.warn("All session info has been fetched");
-				console.warn(JSON.stringify(res, null, "\t"));
-			}
-		);
-	}
-	function httpRequest(method, url, body, errorMsg, callback) {
-		$('#textarea-http').text('');
-		var http = new XMLHttpRequest();
-		http.open(method, url, true);
-		http.setRequestHeader('Content-type', 'application/json');
-		http.addEventListener('readystatechange', processRequest, false);
-		http.send(JSON.stringify(body));
-
-		function processRequest() {
-			if (http.readyState == 4) {
-				if (http.status == 200) {
-					try {
-						callback(JSON.parse(http.responseText));
-					} catch (e) {
-						callback(e);
-					}
-				} else {
-					console.warn(errorMsg + ' (' + http.status + ')');
-					console.warn(http.responseText);
-					$('#textarea-http').text(errorMsg + ": HTTP " + http.status + " (" + http.responseText + ")");
-				}
-			}
-		}
 	}
 </script>
 </html>
