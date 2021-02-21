@@ -40,13 +40,14 @@
 		<div id="logged">
 			<div>
 				<button class="fa fa-microphone" id="audio" style="font-size:24px" />
-				<button class="fa fa-video" id="video" style="font-size:24px" />
+				<button class="fas fa-video" id="video" style="font-size:24px" />
 				<button class="fa fa-comments" id="chat" style="font-size:24px"  />
 				<button class="fa fa-laptop" id="share" style="font-size:24px" />
-				<button class="fa fa-record-vinyl" id="recording" style="font-size:24px"  />
-				<button class="fa fa-expand" id="fullscreen" style="font-size:24px" />
+				<button class="fas fa-record-vinyl" id="recording" style="font-size:24px"  />
+				<button class="fas fa-expand" id="fullscreen" style="font-size:24px" />
 				<!--fa-compress-->
 				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
+
 			</div>
 			<div id="session">
 				<div id="session-header">
@@ -140,34 +141,9 @@
 			if (isPublisher()) {
 
 				// --- 6) Get your own camera stream ---
-
-				var publisherConfig =
-				{
-					audioSource: undefined, // The source of audio. If undefined default microphone
-					videoSource: undefined, // The source of video. If undefined default webcam
-					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-					resolution: '640x480',  // The resolution of your video
-					frameRate: 30,			// The frame rate of your video
-					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-					mirror: false       	// Whether to mirror your local video or not
-				};
-
-				var publisher =OV.initPublisher('video-container',publisherConfig);
+				var publisher = getWebCamStream();
 
 				// --- 7) Specify the actions when events take place in our publisher ---
-
-				// When our HTML video has been added to DOM...
-				publisher.on('videoElementCreated', (event) => {
-					// Init the main video with ours and append our data
-					var userData = {
-						nickName: nickName,
-						userName: userName
-					};
-					initMainVideo(event.element, userData);
-					appendUserData(event.element, userData);
-					$(event.element).prop('muted', true); // Mute local video
-				});
 
 				// added mute/un-mute feature
 					$(document).ready(function() {
@@ -191,41 +167,22 @@
 					$(document).ready(function() {
    						$('#share').click(function() {
    							session.unpublish(publisher);
-							publisher = OV.initPublisher("html-element-id", { videoSource: "screen"});
+							publisher = OV.initPublisher('video-container', { videoSource: "screen"});
 							publisher.once('accessAllowed', (event) => {
             					publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
                 					console.log('User pressed the "Stop sharing" button');
                 					session.unpublish(publisher);
-                					publisher = OV.initPublisher('video-container',publisherConfig);
-									publisher.on('videoElementCreated', (event) => {
-										var userData = {
-											nickName: nickName,
-											userName: userName
-										};
-										initMainVideo(event.element, userData);
-										appendUserData(event.element, userData);
-										$(event.element).prop('muted', true); // Mute local video
-									});
+                					publisher = getWebCamStream();
                 					session.publish(publisher);
             					});
+            					publisherOn(publisher);
             					session.publish(publisher);
 							});
 							publisher.once('accessDenied', (event) => {
-								publisher = OV.initPublisher('video-container',publisherConfig);
-									publisher.on('videoElementCreated', (event) => {
-										var userData = {
-											nickName: nickName,
-											userName: userName
-										};
-										initMainVideo(event.element, userData);
-										appendUserData(event.element, userData);
-										$(event.element).prop('muted', true); // Mute local video
-									});
-                					session.publish(publisher);
             					console.warn('ScreenShare: Access Denied');
+            					publisher = getWebCamStream();
+                				session.publish(publisher);
         					});
-   							$(this).toggleClass("fa-video-slash");
-   							$(this).toggleClass("fa-laptop");
    						});
 					});
 
@@ -253,7 +210,36 @@
 	function inviteLink() {
 		alert([[${ inviteLink }]]);
 	}
-	
+
+	function getWebCamStream(){
+		// --- 6) Get your own camera stream ---
+		var publisher = OV.initPublisher('video-container',{
+			audioSource: undefined, // The source of audio. If undefined default microphone
+			videoSource: undefined, // The source of video. If undefined default webcam
+			publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+			publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+			resolution: '640x480',  // The resolution of your video
+			frameRate: 30,			// The frame rate of your video
+			insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+			mirror: false       	// Whether to mirror your local video or not
+		});
+		// When our HTML video has been added to DOM...
+		publisherOn(publisher);
+		return publisher;
+	}
+
+	function publisherOn(publisher){
+		publisher.on('videoElementCreated', (event) => {
+			var userData = {
+				nickName: nickName,
+				userName: userName
+			};
+			initMainVideo(event.element, userData);
+			appendUserData(event.element, userData);
+			$(event.element).prop('muted', true); // Mute local video
+		});
+	}
+
 	function appendUserData(videoElement, connection) {
 		var clientData;
 		var serverData;
@@ -261,7 +247,7 @@
 		if (connection.nickName) { // Appending local video data
 			clientData = connection.nickName;
 			serverData = connection.userName;
-			nodeId = 'main-videodata';
+			nodeId = 'main-video';
 		} else {
 			clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
 			serverData = JSON.parse(connection.data.split('%/%')[1]).serverData;
