@@ -68,6 +68,29 @@
 		</div>
 	</div>
 
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modal-content">
+	  <span class="close" id="closeChat">&times;</span>
+	  <div>
+		<div class="message-section" id="messages">
+		
+		</div>
+		<div class="message-send-section">
+		  <select name="users" id="users">
+			<option value="all">All</option>
+		  </select>
+		  <input required type="text" name="message" id="messageText">
+		  <button id="sendMessageButton">Send Message</button>
+		</div>
+	  </div>
+	</div>
+  
+  </div>
+
 	<footer class="footer">
 		<div class="container">
 			<div class="text-muted">OpenVidu © 2017</div>
@@ -86,6 +109,7 @@
 	var token = [[${ token }]];
 	var nickName = [[${ nickName }]];
 	var userName = [[${ userName }]];
+	var connections = [];
 
 	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
@@ -123,6 +147,26 @@
 	// --- 4) Connect to the session passing the retrieved token and some more data from
 	//        the client (in this case a JSON with the nickname chosen by the user) ---
 
+	session.on('connectionCreated', (event) => {
+		connections.push(event.connection);
+		// update the option
+		let obj = JSON.parse(event.connection.data.split("%/%")[0]);
+		$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
+		console.warn(obj);
+		console.warn(connections);
+	});
+
+	session.on('connectionDestroyed', (event) => {
+		connections.splice(connections.indexOf(event.connection), 1);
+		$('#'+event.connection.connectionId).remove();
+		console.warn(connections);
+	});
+
+	// Receving Message
+	recvMessage(session);
+	
+
+
 	session.connect(token, { clientData: nickName })
 		.then(() => {
 
@@ -156,6 +200,12 @@
 				var publisher =OV.initPublisher('video-container',publisherConfig);
 
 				// --- 7) Specify the actions when events take place in our publisher ---
+
+
+				sendMessageButton.onclick = () => {
+					sendMessage(session);
+				}
+
 
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', (event) => {
@@ -248,6 +298,60 @@
 
 		// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
+	}
+
+	function sendMessage(session) {
+		let msg = document.getElementById('messageText').value;
+		let recieverConId = document.getElementById('users').value;
+		let recieverCon = connections.find(function (con) {
+			return con.connectionId === recieverConId;
+		});
+		let reciever = [];
+		let msgType;
+		if (recieverCon != undefined) {
+			reciever.push(recieverCon);
+			reciever.push(session.connection);
+			let obj = JSON.parse(recieverCon.data.split("%/%")[0]);
+			msgType = "personal:"+obj.clientData;
+			
+		} else {
+			msgType = "all";
+		}
+
+		msg = `${userName}(${msgType}) : ${msg}`;
+		console.warn('RECEIVER IS := '+ reciever);
+		session.signal({
+			data : msg,
+			to: reciever,
+			type: 'my-chat'
+		})
+		.then(() => {
+			console.info('message successfully sent');
+		})
+		.catch(error => {
+			console.error(error);
+		})
+
+	}
+
+	function recvMessage(session) {
+		session.on('signal', (event) => {
+			console.log(event.data); // Message
+			console.log(event.from); // Connection object of the sender
+			console.log(event.type); // The type of message
+			// $("#chatbox").append("<p>"+ event.data +" </p>")
+			$("#messages").append("<p>"+ event.data +" </p>")
+		});
+	}
+
+	chat.onclick = () => {
+		var modal = document.getElementById("myModal");
+		modal.style.display = "block";
+	}
+
+	closeChat.onclick = () => {
+		var modal = document.getElementById("myModal");
+		modal.style.display = "none";
 	}
 
 	function inviteLink() {
