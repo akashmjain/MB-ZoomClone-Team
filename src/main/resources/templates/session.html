@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+	<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 	<!-- Bootstrap -->
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
@@ -37,6 +38,16 @@
 
 	<div id="main-container" class="container">
 		<div id="logged">
+			<div>
+				<button class="fa fa-microphone" id="audio" style="font-size:24px" />
+				<button class="fas fa-video" id="video" style="font-size:24px" />
+				<button class="fa fa-comments" id="chat" style="font-size:24px"  />
+				<button class="fa fa-laptop" id="share" style="font-size:24px" />
+				<button class="fas fa-record-vinyl" id="recording" style="font-size:24px"  />
+				<button class="fas fa-expand" id="fullscreen" style="font-size:24px" />
+				<!--fa-compress-->
+				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
+			</div>
 			<div id="session">
 				<div id="session-header">
 					<h1 th:text="${sessionName}" id="session-title"></h1>
@@ -57,6 +68,28 @@
 		</div>
 	</div>
 
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modal-content">
+	  <span class="close" id="closeChat">&times;</span>
+	  <div>
+		<div class="message-section" id="messages">
+
+		</div>
+		<div class="message-send-section">
+		  <select name="users" id="users">
+			<option value="all">All</option>
+		  </select>
+		  <input required type="text" name="message" id="messageText">
+		  <button id="sendMessageButton">Send Message</button>
+		</div>
+	  </div>
+	</div>
+
+  </div>
+
 	<footer class="footer">
 		<div class="container">
 			<div class="text-muted">OpenVidu © 2017</div>
@@ -75,6 +108,7 @@
 	var token = [[${ token }]];
 	var nickName = [[${ nickName }]];
 	var userName = [[${ userName }]];
+	var connections = [];
 
 	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
@@ -112,6 +146,26 @@
 	// --- 4) Connect to the session passing the retrieved token and some more data from
 	//        the client (in this case a JSON with the nickname chosen by the user) ---
 
+	session.on('connectionCreated', (event) => {
+		connections.push(event.connection);
+		// update the option
+		let obj = JSON.parse(event.connection.data.split("%/%")[0]);
+		$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
+		console.warn(obj);
+		console.warn(connections);
+	});
+
+	session.on('connectionDestroyed', (event) => {
+		connections.splice(connections.indexOf(event.connection), 1);
+		$('#'+event.connection.connectionId).remove();
+		console.warn(connections);
+	});
+
+	// Receving Message
+	recvMessage(session);
+
+
+
 	session.connect(token, { clientData: nickName })
 		.then(() => {
 
@@ -129,36 +183,62 @@
 			if (isPublisher()) {
 
 				// --- 6) Get your own camera stream ---
-
-				var publisher = OV.initPublisher('video-container', {
-					audioSource: undefined, // The source of audio. If undefined default microphone
-					videoSource: undefined, // The source of video. If undefined default webcam
-					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-					resolution: '640x480',  // The resolution of your video
-					frameRate: 30,			// The frame rate of your video
-					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-					mirror: false       	// Whether to mirror your local video or not
-				});
+				var publisher = getWebCamStream();
 
 				// --- 7) Specify the actions when events take place in our publisher ---
 
-				// When our HTML video has been added to DOM...
-				publisher.on('videoElementCreated', (event) => {
-					// Init the main video with ours and append our data
-					var userData = {
-						nickName: nickName,
-						userName: userName
-					};
-					initMainVideo(event.element, userData);
-					appendUserData(event.element, userData);
-					$(event.element).prop('muted', true); // Mute local video
-				});
+
+				sendMessageButton.onclick = () => {
+					sendMessage(session);
+				}
+
+				// added mute/un-mute feature
+					$(document).ready(function() {
+   						$('#audio').click(function() {
+      						publisher.publishAudio($(this).hasClass("fa-microphone-slash"));
+      						$(this).toggleClass("fa-microphone-slash");
+      						$(this).toggleClass("fa-microphone");
+   						});
+					});
+
+					// added stop/start video feature
+					$(document).ready(function() {
+   						$('#video').click(function() {
+      						publisher.publishVideo($(this).hasClass("fa-video-slash"));
+      						$(this).toggleClass("fa-video-slash");
+      						$(this).toggleClass("fa-video");
+   						});
+					});
+
+					// added screen sharing feature
+					$(document).ready(function() {
+   						$('#share').click(function() {
+   							session.unpublish(publisher);
+   							removeLocalDataFromVideo();
+							publisher = OV.initPublisher('video-container', { videoSource: "screen"});
+							publisher.once('accessAllowed', (event) => {
+            					publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
+                					console.log('User pressed the "Stop sharing" button');
+                					session.unpublish(publisher);
+                					removeLocalDataFromVideo();
+                					publisher = getWebCamStream();
+                					session.publish(publisher);
+            					});
+            					publisherOn(publisher);
+            					session.publish(publisher);
+							});
+							publisher.once('accessDenied', (event) => {
+            					console.warn('ScreenShare: Access Denied');
+            					publisher = getWebCamStream();
+                				session.publish(publisher);
+        					});
+   						});
+					});
 
 
 				// --- 8) Publish your stream ---
-
 				session.publish(publisher);
+
 
 			} else {
 				console.warn('You don\'t have permissions to publish');
@@ -176,6 +256,93 @@
 		session.disconnect();
 	}
 
+	function sendMessage(session) {
+		let msg = document.getElementById('messageText').value;
+		let recieverConId = document.getElementById('users').value;
+		let recieverCon = connections.find(function (con) {
+			return con.connectionId === recieverConId;
+		});
+		let reciever = [];
+		let msgType;
+		if (recieverCon != undefined) {
+			reciever.push(recieverCon);
+			reciever.push(session.connection);
+			let obj = JSON.parse(recieverCon.data.split("%/%")[0]);
+			msgType = "personal:"+obj.clientData;
+
+		} else {
+			msgType = "all";
+		}
+
+		msg = `${userName}(${msgType}) : ${msg}`;
+		console.warn('RECEIVER IS := '+ reciever);
+		session.signal({
+			data : msg,
+			to: reciever,
+			type: 'my-chat'
+		})
+		.then(() => {
+			console.info('message successfully sent');
+		})
+		.catch(error => {
+			console.error(error);
+		})
+
+	}
+
+	function recvMessage(session) {
+		session.on('signal', (event) => {
+			console.log(event.data); // Message
+			console.log(event.from); // Connection object of the sender
+			console.log(event.type); // The type of message
+			// $("#chatbox").append("<p>"+ event.data +" </p>")
+			$("#messages").append("<p>"+ event.data +" </p>")
+		});
+	}
+
+	chat.onclick = () => {
+		var modal = document.getElementById("myModal");
+		modal.style.display = "block";
+	}
+
+	closeChat.onclick = () => {
+		var modal = document.getElementById("myModal");
+		modal.style.display = "none";
+	}
+
+	function inviteLink() {
+		alert([[${ inviteLink }]]);
+	}
+
+	function getWebCamStream(){
+		// --- 6) Get your own camera stream ---
+		var publisher = OV.initPublisher('video-container',{
+			audioSource: undefined, // The source of audio. If undefined default microphone
+			videoSource: undefined, // The source of video. If undefined default webcam
+			publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+			publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+			resolution: '640x480',  // The resolution of your video
+			frameRate: 30,			// The frame rate of your video
+			insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+			mirror: false       	// Whether to mirror your local video or not
+		});
+		// When our HTML video has been added to DOM...
+		publisherOn(publisher);
+		return publisher;
+	}
+
+	function publisherOn(publisher){
+		publisher.on('videoElementCreated', (event) => {
+			var userData = {
+				nickName: nickName,
+				userName: userName
+			};
+			initMainVideo(event.element, userData);
+			appendUserData(event.element, userData);
+			$(event.element).prop('muted', true); // Mute local video
+		});
+	}
+
 	function appendUserData(videoElement, connection) {
 		var clientData;
 		var serverData;
@@ -183,7 +350,7 @@
 		if (connection.nickName) { // Appending local video data
 			clientData = connection.nickName;
 			serverData = connection.userName;
-			nodeId = 'main-videodata';
+			nodeId = 'main-video';
 		} else {
 			clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
 			serverData = JSON.parse(connection.data.split('%/%')[1]).serverData;
@@ -195,6 +362,10 @@
 		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">' + serverData + '</p>';
 		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
 		addClickListener(videoElement, clientData, serverData);
+	}
+
+	function removeLocalDataFromVideo(){
+		$("#data-main-video").remove();
 	}
 
 	function removeUserData(connection) {
@@ -242,7 +413,7 @@
 	}
 
 	function isPublisher() {
-		return userName.includes('publisher');
+		return true;
 	}
 </script>
 

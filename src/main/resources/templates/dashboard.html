@@ -1,4 +1,4 @@
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>openvidu-mvc-java</title>
@@ -41,11 +41,11 @@
 					<form class="form-group" action="/session" method="post">
 						<p>
 							<label>Participant</label>
-							<input class="form-control" type="text" name="data" required="true"></input>
+							<input class="form-control" type="text" name="data" th:value="${data}" th:readonly="${data != null && data != 'guest'} "required="true"></input>
 						</p>
 						<p>
 							<label>Session</label>
-							<input class="form-control" type="text" name="session-name" required="true"></input>
+							<input class="form-control" type="text" name="session-name" th:value="${sessionName}" th:readonly="${sessionName != null}" required="true"></input>
 						</p>
 						<p class="text-center">
 							<button class="btn btn-lg btn-success" type="submit">Join!</button>
@@ -53,8 +53,8 @@
 					</form>
 					<hr></hr>
 					<div id="login-info">
-						<div>Logged as <span th:text="${username}" id="name-user"></span></div>
-						<form action="/logout" method="post">
+						<div>Logged as <span th:text="${data}" id="name-user"></span></div>
+						<form action="/logout">
 							<button id="logout-btn" class="btn btn-warning" type="submit">Log out</button>
 						</form>
 					</div>
@@ -72,10 +72,13 @@
 
 </body>
 
-<script>
-	window.onload = function () { // Generate participant info
-		$("input[name='session-name']").val("Session " + Math.floor(Math.random() * 10));
-		$("input[name='data']").val("Participant " + Math.floor(Math.random() * 100));
+<script th:inline="javascript">
+var sessionName = [[${ sessionName }]];
+	window.onload = function () {
+		console.log(sessionName)
+		if(sessionName === null || sessionName === undefined){
+			$("input[name='session-name']").val("Session " + Math.floor(Math.random() * 10));
+		}
 	}
 </script>
 
