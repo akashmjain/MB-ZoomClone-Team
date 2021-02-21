@@ -214,11 +214,13 @@
 					$(document).ready(function() {
    						$('#share').click(function() {
    							session.unpublish(publisher);
+   							removeLocalDataFromVideo();
 							publisher = OV.initPublisher('video-container', { videoSource: "screen"});
 							publisher.once('accessAllowed', (event) => {
             					publisher.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
                 					console.log('User pressed the "Stop sharing" button');
                 					session.unpublish(publisher);
+                					removeLocalDataFromVideo();
                 					publisher = getWebCamStream();
                 					session.publish(publisher);
             					});
@@ -360,6 +362,10 @@
 		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">' + serverData + '</p>';
 		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
 		addClickListener(videoElement, clientData, serverData);
+	}
+
+	function removeLocalDataFromVideo(){
+		$("#data-main-video").remove();
 	}
 
 	function removeUserData(connection) {
