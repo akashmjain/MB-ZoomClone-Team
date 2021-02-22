@@ -50,6 +50,7 @@
 				<button class="fas fa-expand" id="fullscreen" style="font-size:24px" />
 				<!--fa-compress-->
 				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
+				<button class="btn btn-large" id="showUsersButton" type="button ">Users</button>
 			</div>
 			<div id="session">
 				<div id="session-header">
@@ -71,27 +72,35 @@
 		</div>
 	</div>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
-
-	<!-- Modal content -->
-	<div class="modal-content">
-	  <span class="close" id="closeChat">&times;</span>
-	  <div>
-		<div class="message-section" id="messages">
-
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span class="close" id="closeChat">&times;</span>
+			<div>
+				<div class="message-section" id="messages"></div>
+				<div class="message-send-section" style="display: flex; flex-direction: row;">
+					<select class="dropdown" name="users" id="users" style="flex-grow: 1">
+						<option value="all">All</option>
+					</select>
+					<input required type="text" name="message" id="messageText" style="flex-grow: 2">
+					<button id="sendMessageButton" class="btn btn-success" style="flex-grow: 1;">Send Message</button>
+				</div>
+			</div>
 		</div>
-		<div class="message-send-section">
-		  <select name="users" id="users">
-			<option value="all">All</option>
-		  </select>
-		  <input required type="text" name="message" id="messageText">
-		  <button id="sendMessageButton">Send Message</button>
-		</div>
-	  </div>
 	</div>
 
-  </div>
+	<!-- The User Modal -->
+	<div id="userModel" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span class="close" id="closeUser">&times;</span>
+			<p style="text-align: center;" id="userCount">Number of participents : 12</p>
+			<div>
+				<div class="message-section list-group" id="userList"></div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Footer starts-->
 	<footer class="footer">
@@ -150,16 +159,23 @@
 
 	session.on('connectionCreated', (event) => {
 		connections.push(event.connection);
-		// update the option
 		let obj = JSON.parse(event.connection.data.split("%/%")[0]);
-		$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
-		console.warn(obj);
-		console.warn(connections);
+		// update users list
+		$("#userList").append($('<p>', {class: "list-group-item list-group-item-success", id: event.connection.connectionId+"_user"}).text(obj.clientData));
+		$('#userCount').text('Number of participents : '+connections.length);
+		if (event.connection !== session.connection) {
+			// update the chat list
+			$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
+			console.warn(obj);
+			console.warn(connections);
+		}
 	});
 
 	session.on('connectionDestroyed', (event) => {
 		connections.splice(connections.indexOf(event.connection), 1);
 		$('#'+event.connection.connectionId).remove();
+		$('#'+event.connection.connectionId+"_user").remove();
+		$('#userCount').text('Number of participents : '+connections.length);
 		console.warn(connections);
 	});
 
@@ -286,13 +302,13 @@
 			reciever.push(recieverCon);
 			reciever.push(session.connection);
 			let obj = JSON.parse(recieverCon.data.split("%/%")[0]);
-			msgType = "personal:"+obj.clientData;
+			msgType = obj.clientData;
 
 		} else {
 			msgType = "all";
 		}
 
-		msg = `${userName}(${msgType}) : ${msg}`;
+		msg = `${nickName} to ${msgType}: ${msg}`;
 		console.warn('RECEIVER IS := '+ reciever);
 		session.signal({
 			data : msg,
@@ -318,13 +334,28 @@
 		});
 	}
 
+
+
 	chat.onclick = () => {
 		var modal = document.getElementById("myModal");
 		modal.style.display = "block";
 	}
 
+
+	
 	closeChat.onclick = () => {
 		var modal = document.getElementById("myModal");
+		modal.style.display = "none";
+	}
+
+
+	showUsersButton.onclick = () => {
+		var modal = document.getElementById("userModel");
+		modal.style.display = "block";
+	}
+
+	closeUser.onclick = () => {
+		var modal = document.getElementById("userModel");
 		modal.style.display = "none";
 	}
 
