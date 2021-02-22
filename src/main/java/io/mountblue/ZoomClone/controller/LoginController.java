@@ -18,7 +18,7 @@ public class LoginController {
             return "login";
     }
 
-    @RequestMapping(value = "/dashboard")
+    @RequestMapping(value = "/main")
     public String showDashBoard(@RequestParam(name = "sessionName", required = false) String sessionName,
                                 HttpSession httpSession, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -28,7 +28,7 @@ public class LoginController {
         httpSession.setAttribute("loggedUser",userName);
         model.addAttribute("data", userName);
         model.addAttribute("sessionName", sessionName);
-        return "dashboard";
+        return "main";
     }
 }
 
