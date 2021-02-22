@@ -155,11 +155,13 @@
 
 	session.on('connectionCreated', (event) => {
 		connections.push(event.connection);
-		// update the option
-		let obj = JSON.parse(event.connection.data.split("%/%")[0]);
-		$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
-		console.warn(obj);
-		console.warn(connections);
+		if (event.connection !== session.connection) {
+			// update the option
+			let obj = JSON.parse(event.connection.data.split("%/%")[0]);
+			$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
+			console.warn(obj);
+			console.warn(connections);
+		}
 	});
 
 	session.on('connectionDestroyed', (event) => {
