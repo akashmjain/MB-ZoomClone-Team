@@ -3,70 +3,87 @@
 <head>
     <meta charset="ISO-8859-1">
     <title>Registration</title>
+
+    <!-- Bootstraps starts-->
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+
+    <link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
+    <!-- Bootstraps ends-->
+
 </head>
 <body>
+    <!-- Header starts -->
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://www.mountblue.io/" target="_blank">
+                    <img class="demo-logo" src="images/mb_logo.png" alt="MountBlue logo" width="30" height="30" /></a>
+                <span class="navbar-brand">Cohort 14.1</span>
+            </div>
+        </div>
+    </nav>
+    <!-- Header ends -->
 
-<!-- create navigation bar ( header) -->
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed"
-                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                    aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span> <span
-                    class="icon-bar"></span> <span class="icon-bar"></span> <span
-                    class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#" th:href="@{/showRegistrationForm}">Registration</a>
+    <!-- Main body starts-->
+    <div id="main-container" class="container">
+        <div id="logged">
+            <div id="join" class="vertical-center">
+                <div id="join-dialog" class="jumbotron">
+                    <h2>Registration Form</h2>
+                    <form class="form-group" action="/registerUser" method="post" th:object="${user}">
+
+                        <p>
+                            <label for ="firstName"> First Name </label> :
+                            <input type="text" class = "form-control" id ="firstName" name = "firstName" th:field="*{firstName}"
+                                   placeholder="Enter your firstName..." autofocus="autofocus" required="true">
+                        </p>
+                        <p>
+                            <label for ="lastName"> Last Name </label> :
+                            <input type="text" class = "form-control" id ="lastName" name = "lastName" th:field="*{lastName}"
+                                   placeholder="Enter your LastName..." autofocus="autofocus" required="true">
+                        </p>
+
+                        <p>
+                            <label for ="email"> Email </label> :
+                            <input type="email" class = "form-control" id ="email" name = "email" th:field="*{email}"
+                                   placeholder="Enter your email..." autofocus="autofocus" required="true">
+                        </p>
+                        <p>
+                            <label for="password">Password</label>:
+                            <input type="password" id="password" name="password" class="form-control" th:field="*{password}"
+                                   placeholder="Enter your password..." required="true"/>
+                        </p>
+                        <p class="text-center">
+                            <button class="btn btn-lg btn-success" type="submit">Register!</button>
+                        </p>
+                    </form>
+                    <hr>
+                    <div id="login-info">
+                        <span>Already registered? <a href="/" th:href="@{/login}">Login here!</a></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</nav>
+    <!-- Main body ends-->
 
-<br>
-<br>
-<!-- Create HTML registration form -->
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-
-            <h1 style="text-align: center;">Registration Page</h1>
-            <form th:action="@{/registerUser}" method="post" th:object="${user}">
-                <div class="form-group">
-                    <label class="control-label" for="firstName"> First Name </label>
-                    <input id="firstName" class="form-control" th:field="*{firstName}"
-                           required autofocus="autofocus" />
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="lastName"> Last Name </label> <input
-                        id="lastName" class="form-control" th:field="*{lastName}"
-                        required autofocus="autofocus" />
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="email"> Email </label> <input
-                        id="email" class="form-control" th:field="*{email}" required
-                        autofocus="autofocus" />
-                </div>
-
-                <div class="form-group">
-                    <label class="control-label" for="password"> Password </label> <input
-                        id="password" class="form-control" type="password"
-                        th:field="*{password}" required autofocus="autofocus" />
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-success">Register</button>
-                    <span>Already registered? <a href="/" th:href="@{/login}">Login here</a></span>
-                </div>
-            </form>
+    <!-- Footer starts-->
+    <footer class="footer">
+        <div class="container">
+            <div class="text-muted">MountBlue &copy 2021</div>
         </div>
-    </div>
-</div>
+    </footer>
+    <!-- Footer ends-->
 </body>
 </html>
 
