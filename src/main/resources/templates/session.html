@@ -83,12 +83,12 @@
 			<span class="close" id="closeChat">&times;</span>
 			<div>
 				<div class="message-section" id="messages"></div>
-				<div class="message-send-section">
-					<select name="users" id="users">
+				<div class="message-send-section" style="display: flex; flex-direction: row;">
+					<select class="dropdown" name="users" id="users" style="flex-grow: 1">
 						<option value="all">All</option>
 					</select>
-					<input required type="text" name="message" id="messageText">
-					<button id="sendMessageButton">Send Message</button>
+					<input required type="text" name="message" id="messageText" style="flex-grow: 2">
+					<button id="sendMessageButton" class="btn btn-success" style="flex-grow: 1;">Send Message</button>
 				</div>
 			</div>
 		</div>
@@ -170,7 +170,6 @@
 		$('#userCount').text('Number of participents : '+connections.length);
 		if (event.connection !== session.connection) {
 			// update the chat list
-			
 			$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
 			console.warn(obj);
 			console.warn(connections);
