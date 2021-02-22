@@ -16,6 +16,13 @@
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
 	<script src="openvidu-browser-2.16.0.js"></script>
+	<style>
+		#main-video { cursor:zoom-in; }
+		#main-video:-webkit-full-screen { cursor:zoom-out; }
+		#main-video:-moz-full-screen { cursor:zoom-out; }
+		#main-video:-ms-fullscreen { cursor:zoom-out; }
+		#main-video:fullscreen { cursor:zoom-out; }
+	</style>
 </head>
 
 <body>
@@ -191,6 +198,22 @@
 				sendMessageButton.onclick = () => {
 					sendMessage(session);
 				}
+
+				// added feature for body-fullscreen
+				$(document).ready(function() {
+   					$('#fullscreen').click(function() {
+   						var elem = document.documentElement;
+   						toggleFullscreen(elem);
+   					});
+				});
+
+				// added feature for video-fullscreen
+				$(document).ready(function() {
+   					$('#main-video').click(function() {
+   						var elem = document.getElementById("main-video");
+   						toggleFullscreen(elem);
+   					});
+				});
 
 				// added mute/un-mute feature
 					$(document).ready(function() {
@@ -415,6 +438,36 @@
 	function isPublisher() {
 		return true;
 	}
+
+   	function toggleFullscreen(elem) {
+   		$('#fullscreen').toggleClass("fa-compress");
+   		$('#fullscreen').toggleClass("fa-expand");
+  		if (!document.fullscreenElement && !document.mozFullScreenElement &&
+    		!document.webkitFullscreenElement && !document.msFullscreenElement) {
+    		if (elem.requestFullscreen) {
+      			elem.requestFullscreen();
+    		} else if (elem.msRequestFullscreen) {
+      			elem.msRequestFullscreen();
+    		} else if (elem.mozRequestFullScreen) {
+      			elem.mozRequestFullScreen();
+    		} else if (elem.webkitRequestFullscreen) {
+      			elem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    		}
+  		} else {
+    		if (document.exitFullscreen) {
+      			document.exitFullscreen();
+    		} else if (document.msExitFullscreen) {
+      			document.msExitFullscreen();
+    		} else if (document.mozCancelFullScreen) {
+      			document.mozCancelFullScreen();
+    		} else if (document.webkitExitFullscreen) {
+      			document.webkitExitFullscreen();
+    		}
+  		}
+   	}
+
+
+
 </script>
 
 </html>
