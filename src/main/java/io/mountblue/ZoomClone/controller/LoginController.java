@@ -35,12 +35,18 @@ public class LoginController {
     public String showDashBoard(@RequestParam(name = "sessionName", required = false) String sessionName,
                                 HttpSession httpSession, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Users theUser = userDetailsServiceImpl.findByEmail(authentication.getName());
-        String fullName = theUser.getFirstName()+" "+theUser.getLastName();
-        if ("anonymousUser".equals(fullName)) fullName = "guest";
+        String username = authentication.getName();
+        String fullName;
+        if ("anonymousUser".equals(username)){
+            fullName = "guest";
+            username = "guest";
+        }else {
+            Users theUser = userDetailsServiceImpl.findByEmail(username);
+            fullName = theUser.getFirstName()+" "+theUser.getLastName();
+        }
         if ("guest".equals(fullName) && sessionName == null) return "redirect:/login";
-        httpSession.setAttribute("loggedUser",authentication.getName());
-        model.addAttribute("userName",authentication.getName());
+        httpSession.setAttribute("loggedUser",username);
+        model.addAttribute("userName",username);
         model.addAttribute("data", fullName);
         model.addAttribute("sessionName", sessionName);
 
