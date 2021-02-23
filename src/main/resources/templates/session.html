@@ -44,12 +44,12 @@
 			<div>
 				<button class="fa fa-microphone" id="audio" style="font-size:24px" />
 				<button class="fas fa-video" id="video" style="font-size:24px" />
-				<button class="fa fa-comments" id="chat" style="font-size:24px"  />
+				<button class="fa fa-comments" id="chat" style="font-size:24px"><sup style="color: red;" id="chatCount" value=1/></button>
 				<button class="fa fa-laptop" id="share" style="font-size:24px" />
 				<button class="fa fa-expand" id="fullscreen" style="font-size:24px" />
 				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
 				<button class="fa fa-group" id="showUsersButton" type="button" style="font-size:24px" >
-					<sup style="color: red" id="userCount" /></button>
+					<sup style="color: black" id="userCount" /></button>
 			</div>
 			<div id="session">
 				<div id="session-header">
@@ -119,6 +119,7 @@
 	var nickName = [[${ nickName }]];
 	var userName = [[${ userName }]];
 	var connections = [];
+	var newMessages = 0;
 
 	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
@@ -174,7 +175,7 @@
 		connections.splice(connections.indexOf(event.connection), 1);
 		$('#'+event.connection.connectionId).remove();
 		$('#'+event.connection.connectionId+"_user").remove();
-		$('#userCount').text('Number of participents : '+connections.length);
+		$('#userCount').text(connections.length);
 		console.warn(connections);
 	});
 
@@ -206,7 +207,11 @@
 
 
 				sendMessageButton.onclick = () => {
-					sendMessage(session);
+					msgText = document.getElementById('messageText');
+					if (msgText.value !== '') {
+						sendMessage(session);
+					}
+					msgText.value = '';
 				}
 
 				// added feature for body-fullscreen
@@ -330,6 +335,13 @@
 			console.log(event.type); // The type of message
 			// $("#chatbox").append("<p>"+ event.data +" </p>")
 			$("#messages").append("<p>"+ event.data +" </p>")
+			// unhide it
+			
+			var modal = document.getElementById("myModal");
+			if (modal.style.display == "none" || modal.style.display == '') {
+				newMessages++;
+				$('#chatCount').text(newMessages);
+			}
 		});
 	}
 
@@ -337,7 +349,10 @@
 
 	chat.onclick = () => {
 		var modal = document.getElementById("myModal");
+		newMessages = 0;
+		$('#chatCount').text('');
 		modal.style.display = "block";
+
 	}
 
 
