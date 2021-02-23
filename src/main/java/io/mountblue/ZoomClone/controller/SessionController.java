@@ -3,8 +3,6 @@ package io.mountblue.ZoomClone.controller;
 
 import io.openvidu.java.client.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,7 +78,12 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-                model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/main?sessionName="+sessionName);
+
+                if (request.getServerName().equals("localhost")){
+                    model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/main?sessionName="+sessionName);
+                }else {
+                    model.addAttribute("inviteLink","https://"+request.getServerName()+"/main?sessionName="+sessionName);
+                }
                 // Return session.html template
                 return "session";
 
@@ -109,7 +112,12 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-                model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/main?sessionName="+sessionName);
+
+                if (request.getServerName().equals("localhost")){
+                    model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/main?sessionName="+sessionName);
+                }else {
+                    model.addAttribute("inviteLink","https://"+request.getServerName()+"/main?sessionName="+sessionName);
+                }
                 // Return session.html template
                 return "session";
 

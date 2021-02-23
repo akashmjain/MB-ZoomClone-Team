@@ -11,10 +11,10 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-	<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+	<script src="https://kit.fontawesome.com/e6b6b42e12.js" crossorigin="anonymous"></script>
 	<!-- Bootstrap -->
 
-	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
+	<link rel="styleSheet" href="style.css" type="text/css" media="screen" />
 	<script src="openvidu-browser-2.16.0.js"></script>
 	<style>
 		#main-video { cursor:zoom-in; }
@@ -46,11 +46,10 @@
 				<button class="fas fa-video" id="video" style="font-size:24px" />
 				<button class="fa fa-comments" id="chat" style="font-size:24px"  />
 				<button class="fa fa-laptop" id="share" style="font-size:24px" />
-				<button class="fas fa-record-vinyl" id="recording" style="font-size:24px"  />
-				<button class="fas fa-expand" id="fullscreen" style="font-size:24px" />
-				<!--fa-compress-->
+				<button class="fa fa-expand" id="fullscreen" style="font-size:24px" />
 				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
-				<button class="btn btn-large" id="showUsersButton" type="button ">Users</button>
+				<button class="fa fa-group" id="showUsersButton" type="button" style="font-size:24px" >
+					<sup style="color: red" id="userCount" /></button>
 			</div>
 			<div id="session">
 				<div id="session-header">
@@ -95,7 +94,7 @@
 		<!-- Modal content -->
 		<div class="modal-content">
 			<span class="close" id="closeUser">&times;</span>
-			<p style="text-align: center;" id="userCount">Number of participents : 12</p>
+			<p style="text-align: center;" >Participants</p>
 			<div>
 				<div class="message-section list-group" id="userList"></div>
 			</div>
@@ -162,7 +161,7 @@
 		let obj = JSON.parse(event.connection.data.split("%/%")[0]);
 		// update users list
 		$("#userList").append($('<p>', {class: "list-group-item list-group-item-success", id: event.connection.connectionId+"_user"}).text(obj.clientData));
-		$('#userCount').text('Number of participents : '+connections.length);
+		$('#userCount').text(connections.length);
 		if (event.connection !== session.connection) {
 			// update the chat list
 			$('#users').append($('<option>', { value : event.connection.connectionId, id: event.connection.connectionId}).text(obj.clientData));
