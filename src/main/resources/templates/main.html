@@ -36,7 +36,6 @@
 	<div id="main-container" class="container">
 		<div id="logged">
 			<div id="join" class="vertical-center">
-<!--				<div id="img-div"><img src="images/openvidu_grey_bg_transp_cropped.png" /></div>-->
 				<div id="join-dialog" class="jumbotron">
 					<h2>Join a video session</h2>
 					<form class="form-group" action="/session" method="post">
@@ -54,7 +53,7 @@
 					</form>
 					<hr></hr>
 					<div id="login-info">
-						<div>Logged as <span th:text="${data}" id="name-user"></span></div>
+						<div>Logged as <span th:text="${userName}" id="name-user"></span></div>
 						<form action="/logout">
 							<button id="logout-btn" class="btn btn-warning" type="submit">Log out</button>
 						</form>

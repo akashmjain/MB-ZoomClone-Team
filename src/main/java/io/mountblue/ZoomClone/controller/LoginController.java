@@ -1,5 +1,8 @@
 package io.mountblue.ZoomClone.controller;
 
+import io.mountblue.ZoomClone.model.Users;
+import io.mountblue.ZoomClone.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,9 @@ import java.util.Base64;
 
 @Controller
 public class LoginController {
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @RequestMapping(value = {"/login", "/"})
     public String login(HttpSession httpSession) {
@@ -29,12 +35,15 @@ public class LoginController {
     public String showDashBoard(@RequestParam(name = "sessionName", required = false) String sessionName,
                                 HttpSession httpSession, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        if ("anonymousUser".equals(userName)) userName = "guest";
-        if ("guest".equals(userName) && sessionName == null) return "redirect:/login";
-        httpSession.setAttribute("loggedUser",userName);
-        model.addAttribute("data", userName);
+        Users theUser = userDetailsServiceImpl.findByEmail(authentication.getName());
+        String fullName = theUser.getFirstName()+" "+theUser.getLastName();
+        if ("anonymousUser".equals(fullName)) fullName = "guest";
+        if ("guest".equals(fullName) && sessionName == null) return "redirect:/login";
+        httpSession.setAttribute("loggedUser",authentication.getName());
+        model.addAttribute("userName",authentication.getName());
+        model.addAttribute("data", fullName);
         model.addAttribute("sessionName", sessionName);
+
         return "main";
     }
 }
