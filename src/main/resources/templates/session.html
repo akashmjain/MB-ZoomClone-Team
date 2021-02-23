@@ -55,8 +55,10 @@
 				<div id="session-header">
 					<h1 th:text="${sessionName}" id="session-title"></h1>
 					<form action="/leave-session" method="post">
-						<input type="hidden" name="session-name" th:value="${sessionName}"></input>
-						<input type="hidden" name="token" th:value="${token}"></input>
+						<input type="hidden" name="session-name" th:value="${sessionName}" />
+						<input type="hidden" name="token" th:value="${token}" />
+						<input type="hidden" name="nickName" th:value="${nickName}" />
+						<input type="hidden" name="userName" th:value="${userName}" />
 						<button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit" onclick="leaveSession()">
 							Leave session</button>
 					</form>

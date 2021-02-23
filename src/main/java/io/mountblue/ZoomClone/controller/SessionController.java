@@ -131,12 +131,20 @@ public class SessionController {
 
     @RequestMapping(value = "/leave-session", method = RequestMethod.POST)
     public String removeUser(@RequestParam(name = "session-name") String sessionName,
-                             @RequestParam(name = "token") String token, Model model, HttpSession httpSession) throws Exception {
+                             @RequestParam(name = "token") String token,
+                             @RequestParam(name = "userName") String userName,
+                             @RequestParam(name = "nickName") String fullName,
+                             Model model, HttpSession httpSession) throws Exception {
 
         try {
             checkUserLogged(httpSession);
         } catch (Exception e) {
-            return "login";
+            if ("guest".equals(userName)) return "login";
+            httpSession.setAttribute("loggedUser",userName);
+            model.addAttribute("userName",userName);
+            model.addAttribute("data", fullName);
+            model.addAttribute("sessionName", sessionName);
+            return "main";
         }
         System.out.println("Removing user | sessioName=" + sessionName + ", token=" + token);
 

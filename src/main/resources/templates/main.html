@@ -45,7 +45,7 @@
 						</p>
 						<p>
 							<label>Session</label>
-							<input class="form-control" type="text" name="session-name" th:value="${sessionName}" th:readonly="${sessionName != null}" required="true"></input>
+							<input class="form-control" type="text" name="session-name" th:value="${sessionName}" th:readonly="${sessionName != null && data == 'guest'}" required="true"></input>
 						</p>
 						<p class="text-center">
 							<button class="btn btn-lg btn-success" type="submit">Join!</button>
