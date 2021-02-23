@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,6 +63,14 @@ public class SessionController {
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                 .role(role).data(serverData).build();
 
+        // Encrypting inviteLink
+        Base64.Encoder encoder = Base64.getEncoder();
+        String inviteLink = encoder.encodeToString(("/main?sessionName="+sessionName).getBytes());
+        if (request.getServerName().equals("localhost")){
+            inviteLink = "https://"+request.getServerName()+":"+request.getServerPort()+"/guest?path="+inviteLink;
+        }else {
+            inviteLink = "https://"+request.getServerName()+"/guest?path="+inviteLink;
+        }
         if (this.mapSessions.get(sessionName) != null) {
             // Session already exists
             System.out.println("Existing session " + sessionName);
@@ -78,12 +87,7 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-
-                if (request.getServerName().equals("localhost")){
-                    model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/main?sessionName="+sessionName);
-                }else {
-                    model.addAttribute("inviteLink","https://"+request.getServerName()+"/main?sessionName="+sessionName);
-                }
+                model.addAttribute("inviteLink",inviteLink);
                 // Return session.html template
                 return "session";
 
@@ -112,12 +116,7 @@ public class SessionController {
                 model.addAttribute("token", token);
                 model.addAttribute("nickName", clientData);
                 model.addAttribute("userName", httpSession.getAttribute("loggedUser"));
-
-                if (request.getServerName().equals("localhost")){
-                    model.addAttribute("inviteLink","https://"+request.getServerName()+":"+request.getServerPort()+"/main?sessionName="+sessionName);
-                }else {
-                    model.addAttribute("inviteLink","https://"+request.getServerName()+"/main?sessionName="+sessionName);
-                }
+                model.addAttribute("inviteLink",inviteLink);
                 // Return session.html template
                 return "session";
 

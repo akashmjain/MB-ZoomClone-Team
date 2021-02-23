@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
+import java.util.Base64;
 
 @Controller
 public class LoginController {
@@ -15,6 +16,13 @@ public class LoginController {
     @RequestMapping(value = {"/login", "/"})
     public String login(HttpSession httpSession) {
             return "login";
+    }
+
+    @RequestMapping(value = "/guest")
+    public String guestJoining(@RequestParam(name = "path") String encryptedPath){
+        Base64.Decoder decoder = Base64.getDecoder();
+        String decryptedPath = new String(decoder.decode(encryptedPath));
+        return "redirect:"+decryptedPath;
     }
 
     @RequestMapping(value = "/main")
