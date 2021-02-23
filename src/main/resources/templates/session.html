@@ -22,6 +22,36 @@
 		#main-video:-moz-full-screen { cursor:zoom-out; }
 		#main-video:-ms-fullscreen { cursor:zoom-out; }
 		#main-video:fullscreen { cursor:zoom-out; }
+
+		i{cursor: pointer;}
+		.features{
+            border-radius: 8px;
+        }
+        .space{
+            margin: 5px 0px;
+            padding: 10px;
+            height: 50px;
+            width: 50px;
+            text-align: center;
+            border-radius: 5px;
+            font-size:30px;
+        }
+        .space:hover{
+            background-color: lightgray;
+        }
+
+        #audio{
+            margin-left: 5px;
+        }
+
+        #share{
+            margin-right: 5px;
+        }
+
+        .groupitem3{
+            margin: 15px 0px;
+            color: white;
+        }
 	</style>
 </head>
 
@@ -41,15 +71,24 @@
 
 	<div id="main-container" class="container">
 		<div id="logged">
-			<div>
-				<button class="fa fa-microphone" id="audio" style="font-size:24px" />
-				<button class="fas fa-video" id="video" style="font-size:24px" />
-				<button class="fa fa-comments" id="chat" style="font-size:24px"><sup style="color: red;" id="chatCount" value=1/></button>
-				<button class="fa fa-laptop" id="share" style="font-size:24px" />
-				<button class="fa fa-expand" id="fullscreen" style="font-size:24px" />
-				<button class="btn btn-large" type="button" onclick="inviteLink()">Invite</button>
-				<button class="fa fa-group" id="showUsersButton" type="button" style="font-size:24px" >
-					<sup style="color: black" id="userCount" /></button>
+			<div class="row features" style="background-color: #EEEEEE; align-items: center;">
+				<div class="col-md-5 groupitem1">
+					<i class="fa fa-microphone space" id="audio"></i>
+					<i class="fas fa-video space" id="video"></i>
+				</div>
+				<div class="col-md-6">
+                    <span class="space groupitem2">
+					   <i class="fa fa-group" id="showUsersButton" type="button"><sup style="color: black" id="userCount" /></i>
+                    </span>
+					<span class="space groupitem2">
+					   <i class="fa fa-comments" id="chat"><sup style="color: red;" id="chatCount" value=1 /></i>
+                    </span>
+					<i class="fa fa-laptop space groupitem2" id="share"> </i>
+					<i class="fas fa-expand space groupitem2" id="fullscreen"></i>
+				</div>
+				<div class="col">
+					<button class="btn btn-large groupitem3" type="button" style="background-color: #65D463" onclick="inviteLink()">Invite</button>
+				</div>
 			</div>
 			<div id="session">
 				<div id="session-header">

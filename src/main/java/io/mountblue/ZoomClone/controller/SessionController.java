@@ -67,8 +67,10 @@ public class SessionController {
         Base64.Encoder encoder = Base64.getEncoder();
         String inviteLink = encoder.encodeToString(("/main?sessionName="+sessionName).getBytes());
         if (request.getServerName().equals("localhost")){
+            // for localhost
             inviteLink = "https://"+request.getServerName()+":"+request.getServerPort()+"/guest?path="+inviteLink;
         }else {
+            // for AWS
             inviteLink = "https://"+request.getServerName()+"/guest?path="+inviteLink;
         }
         if (this.mapSessions.get(sessionName) != null) {
