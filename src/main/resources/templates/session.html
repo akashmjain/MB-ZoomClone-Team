@@ -17,11 +17,11 @@
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen" />
 	<script src="openvidu-browser-2.16.0.js"></script>
 	<style>
-		#main-video { cursor:zoom-in; }
-		#main-video:-webkit-full-screen { cursor:zoom-out; }
-		#main-video:-moz-full-screen { cursor:zoom-out; }
-		#main-video:-ms-fullscreen { cursor:zoom-out; }
-		#main-video:fullscreen { cursor:zoom-out; }
+		#local-video-undefined { cursor:zoom-in; }
+		#local-video-undefined:-webkit-full-screen { cursor:zoom-out; }
+		#local-video-undefined:-moz-full-screen { cursor:zoom-out; }
+		#local-video-undefined:-ms-fullscreen { cursor:zoom-out; }
+		#local-video-undefined:fullscreen { cursor:zoom-out; }
 
 		i{cursor: pointer;}
 		.features{
@@ -103,12 +103,7 @@
 							Leave session</button>
 					</form>
 				</div>
-				<div id="main-video" class="col-md-6">
-					<p class="nickName"></p>
-					<p class="userName"></p>
-					<video autoplay="autoplay" playsinline="true"></video>
-				</div>
-				<div id="video-container" class="col-md-6"></div>
+				<div id="video-container" style="height:700px; width:700px;"></div>
 			</div>
 		</div>
 	</div>
@@ -266,8 +261,8 @@
 
 				// added feature for video-fullscreen
 				$(document).ready(function() {
-   					$('#main-video').click(function() {
-   						var elem = document.getElementById("main-video");
+   					$('#local-video-undefined').click(function() {
+   						var elem = document.getElementById("local-video-undefined");
    						toggleFullscreen(elem);
    					});
 				});
@@ -442,7 +437,6 @@
 				nickName: nickName,
 				userName: userName
 			};
-			initMainVideo(event.element, userData);
 			appendUserData(event.element, userData);
 			$(event.element).prop('muted', true); // Mute local video
 		});
@@ -466,7 +460,6 @@
 		dataNode.id = "data-" + nodeId;
 		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">' + serverData + '</p>';
 		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
-		addClickListener(videoElement, clientData, serverData);
 	}
 
 	function removeLocalDataFromVideo(){
@@ -474,47 +467,11 @@
 	}
 
 	function removeUserData(connection) {
-		var userNameRemoved = $("#data-" + connection.connectionId);
-		if ($(userNameRemoved).find('p.userName').html() === $('#main-video p.userName').html()) {
-			cleanMainVideo(); // The participant focused in the main video has left
-		}
 		$("#data-" + connection.connectionId).remove();
 	}
 
 	function removeAllUserData() {
 		$(".data-node").remove();
-	}
-
-	function cleanMainVideo() {
-		$('#main-video video').get(0).srcObject = null;
-		$('#main-video p').each(function () {
-			$(this).html('');
-		});
-	}
-
-	function addClickListener(videoElement, clientData, serverData) {
-		videoElement.addEventListener('click', function () {
-			var mainVideo = $('#main-video video').get(0);
-			if (mainVideo.srcObject !== videoElement.srcObject) {
-				$('#main-video').fadeOut("fast", () => {
-					$('#main-video p.nickName').html(clientData);
-					$('#main-video p.userName').html(serverData);
-					mainVideo.srcObject = videoElement.srcObject;
-					$('#main-video').fadeIn("fast");
-				});
-			}
-		});
-	}
-
-	function initMainVideo(videoElement, userData) {
-		$('#main-video video').get(0).srcObject = videoElement.srcObject;
-		$('#main-video p.nickName').html(userData.nickName);
-		$('#main-video p.userName').html(userData.userName);
-		$('#main-video video').prop('muted', true);
-	}
-
-	function initMainVideoThumbnail() {
-		$('#main-video video').css("background", "url('images/subscriber-msg.jpg') round");
 	}
 
 	function isPublisher() {
@@ -547,8 +504,6 @@
     		}
   		}
    	}
-
-
 
 </script>
 
